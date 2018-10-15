@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <meta name="description" content="Der Successive Shortest Path Algorithmus zur Berechnung kostenminimaler Flüsse" />
+    <meta name="keywords" content="Successive Shortest Path, minimum cost flow, algorithm, TUM, Technische Universität München, Applet">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="author" content="Gergana Kratuncheva">
+	
+	
+	<!--     the whole page layout style -->
+    <link rel="stylesheet" type="text/css" href="../library/css/style.css" />
+
+    <link rel="stylesheet" type="text/css" href="../library/css/tum-theme2/jquery-ui-1.10.1.custom.min.css" />
+	
+	
+	 <!--     MathJax, used in the more tab in pseudocode -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            showMathMenu: false,
+            showMathMenuMSIE: false
+        });
+    </script>
+	
+	
+	<!-- LOCAL -->
+    <script src="../library/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="../library/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+    <link type="text/css" href="../library/css/mmenu/jquery.mmenu.all.css" rel="stylesheet" />
+    <script type="text/javascript" src="../library/js/mmenu/jquery.mmenu.min.all.js"></script>
+    <script type="text/javascript" src="../library/js/mathjax/MathJax.js?config=TeX-AMS-MML_SVG.js&locale=en"></script>
+    <script src="../library/js/d3/d3.js"></script>
+	
+	
+	<!--     Adrians d3 related library code -->
+   <script src="js/Graph.js"></script>
+    <script src="js/GraphDrawer.js"></script>
+    <script src="js/GraphEditor.js"></script>
+    <script src="../library-d3-svg/js/Logger.js"></script>
+    <script src="js/Tab.js"></script>
+    <script src="js/AlgorithmTab.js"></script>
+    <script src="js/GraphEditorTab.js"></script>
+    <script src="js/siteAnimation.js"></script>
+	
+	
+	 <!-- LNG -->
+    <script src="../library/js/lang.js" type="text/javascript"></script>
+    <script src="../library/js/utilities.js" type="text/javascript"></script>
+	
+	
+	<!--Style-->
+	<link rel="stylesheet" type="text/css" href="../library-d3-svg/css/graph-style.css" />
+    <link rel="stylesheet" type="text/css" href="../library-d3-svg/css/style.css" />
+
+	
+	<!--     Files used only for this applet -->
+    <script src="js/siteLayout.js" type="text/javascript"></script>
+    <script src="js/flowSSPAlgorithm.js" type="text/javascript"></script>
+
+	
+	<!--Title-->
+	<title>Successive Shortest Path Algorithm For Min-Cost-Flow </title>
+
+</head>
+	
+<body>
+
+<!-- svg definitons -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <marker id="arrowhead2" refX="24" refY="4" markerWidth="24" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0,0 V 8 L12,4 Z"></path>
+        </marker>
+
+         <marker id="arrowhead2-red" refX="24" refY="4" markerWidth="24" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse" fill="rgb(196, 7, 27)">
+          <path d="M 0,0 V 8 L12,4 Z"></path>
+        </marker>
+
+         <marker id="arrowhead2-lightRed" refX="24" refY="4" markerWidth="24" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse" fill="rgb(240, 128, 128)">
+          <path d="M 0,0 V 8 L12,4 Z"></path>
+        </marker>
+
+         <marker id="arrowhead2-green" refX="24" refY="4" markerWidth="24" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse" fill="rgb(115, 183, 141)">
+          <path d="M 0,0 V 8 L12,4 Z"></path>
+        </marker>
+      </defs>
+    </svg>
+    <noscript>
+        <div class="ui-widget">
+            <div class="ui-state-error ui-corner-all" style="padding: .7em;">
+                <div class="ui-icon ui-icon-alert errorIcon"></div>
+                <strong>Bitte aktivieren Sie Javascript!</strong>
+                <ul style="margin: 0px;">
+                    <li>
+                        Diese Seite benötigt Javascript, um ordnungsgemäß angezeigt zu werden.
+                    </li>
+                    <li>
+                        In Ihrem Browser ist Javascript aktuell deaktiviert. Eine Anleitung zur Aktivierung von Javascript finden Sie beispielsweise <a href="http://www.enable-javascript.com/">hier</a>.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </noscript>
+    <script>
+        $(function() {
+            initializeSiteLayout(flowSSPAlgorithm);
+
+        });
+		<!--LNG.setLanguage('en');-->
+        $(document).ready(function() {
+            $("#menu").mmenu({
+               "navbar": {
+                  "title": "Übersicht"
+               },
+               "offCanvas": {
+                  "zposition": "front"
+               },
+               "counters": true,
+               "slidingSubmenus": true,
+               "classes": "mm-light",
+            });
+         });
+    </script>
+    <a id="menu_link" href="#menu"></a>
+    <nav id="menu">
+        <ul>
+            <li>
+                <a style="white-space:pre-line" href="http://www-m9.ma.tum.de/Allgemeines/GraphAlgorithmenEn">
+                <img src="../library/img/logo_ohne.png" alt="Overview Graph Algorithms">
+                Übersichtsseite Graphalgorithmen</a>
+            </li>
+            <li><span>Kürzeste-Wege - Algorithmen</span>
+                <ul>
+                   <li><a href="../spp-dijkstra/index_en.html">Dijkstra - Algorithmus</a></li>
+                   <li><a href="../spp-a-star/index_en.html">A* Algorithmus</a></li>
+                   <li><a href="../spp-bellman-ford/index_en.html">Bellman-Ford - Algorithmus</a></li>
+                   <li><a href="../spp-floyd-warshall/index_en.html">Floyd-Warshall - Algorithmus</a></li>
+                   <!--<li><a href="../spprc-label-setting/index_en.html">Label-Setting Algorithm</a></li>-->
+                </ul>
+            </li>
+            <li><span>Spannbaum - Algorithmen</span>
+                <ul>
+                   <li><a href="../mst-prim/index_en.html">Algorithmus von Prim</a></li>
+                   <li><a href="../mst-kruskal/index_en.html">Algorithmus von Kruskal</a></li>
+                </ul>
+            </li>
+            <li><span>Fluss - Algorithmen</span>
+                <ul>
+                   <li><a href="../flow-ford-fulkerson/index_en.html">Algorithmus von Ford und Fulkerson</a></li>
+				   <!-- TODO: Add link for Dinic Algorithm when done-->
+                   <li class="Selected"><a href="../flow-cycle-cancelling/index_en.html">Cycle-Cancelling Algorithmus</a></li>
+				   <li class="Selected"><a href="../flow-successive-shortest-path/index_en.html">Successive-Shortest-Path Algorithmus</a></li>
+                   <!--<li><a href="../flow-push-relabel/index_en.html">Push-Relabel Algorithm</a></li>-->
+                </ul>
+            </li>
+            <li><span>Matching - Algorithmen</span>
+                <ul>
+                   <li><a href="../matchings-hopcroft-karp/index_en.html">Algorithmus von Hopcroft-Karp</a></li>
+                   <li><a href="../matchings-hungarian-method/index_en.html">Ungarische Methode</a></li>
+                   <li><a href="../matchings-blossom-algorithm/index_en.html">Blossom-Algorithmus von Edmonds</a></li>
+                </ul>
+            </li>
+            <li><span>Eulerwege und Briefträgerproblem</span>
+                <ul>
+                   <li><a href="../hierholzer/index_en.html">Algorithmus von Hierholzer</a></li>
+                   <li><a href="../directed-chinese-postman/index_en.html">Chinesisches Postboten-Problem</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <!--<div>-->
+    <header>
+        <img src="img/title.svg" alt="A maximum flow"></img>
+        <span class="adrianheader">Der Successive Shortest Path Algorithmus</span>
+        <img style="position:absolute; right:0px" src="../library/img/TUMLogo.png" alt="Technische Universität München">
+    </header>
+
+<!--     <svg height="0px" widht ="0px">
+        <defs>
+        <marker id="arrowhead2" refX="12" refY="2" markerWidth="12" markerHeight="4" orient="auto"><path d="M 0,0 V 4 L6,2 Z"></path></marker>
+        </defs>
+    </svg> -->
+	
+	
+	<!-- Add tabs -->
+	<div id="tabs">
+        <ul>
+		    <!-- Define the tabs -->
+            <li><a href="#tab_te"><span>Einführung</span></a></li>
+            <li><a href="#tab_tg"><span>Graph erstellen</span></a></li>
+            <li><a href="#tab_ta"><span>Algorithmus ausführen</span></a></li>
+            <li><a href="#tab_ti"><span>Beschreibung des Algorithmus</span></a></li>
+			<!--<li><a href="#tab_tf1"><span>Forschungsaufgabe 1 </span></a></li>
+            <li><a href="#tab_tf2"><span>Forschungsaufgabe 2 </span></a></li> -->
+            <li><a href="#tab_tw"><span>Weiteres</span></a></li>
+        </ul>
+	
+	
+	
+	
+	
+	 <!-- TAB Einführung -->
+        <div id="tab_te">
+            <div id="te_div_Einfuehrungstext">
+
+                <div id="te_div_beispiel1Container">
+                <div id="svgtest"></div>
+                <img id="te_img_beispiel1" src="img/ahuja.svg" alt="ahuja">
+
+                <p>Wie kann man am günstigsten 4 Flusseinheiten von s zu t schicken?</p></div>
+<!--                 <div id="te_div_beispiel1Container"><img id="te_img_beispiel1" src="https://i1.wp.com/cs.stanford.edu/people/trevisan/cs261-11/network1.png" alt="Flow problem in network routing capacity"><p>Flow problem in network routing capacity</p></div> -->
+
+                <h1>Das Min-Cost Flow Problem</h1>
+                <p>Wir würden gerne eine bestimmte Menge an Ressourcen von Punkt A zu Punkt B transportieren wollen. Die Pfade, die wir verwenden können, haben begränzte <strong>Kapazitäten</strong> und manchmal auch andere Eigenschaften (z.B. Länge, Anzahl an Ampeln, usw.), die wir unter dem Begriff <strong>Kosten</strong> zusammenfassen können. Die Kosten sind unterschiedlich für die unterschiedlichen Wegen von A nach B. Manchmal ist die Kapazität der "billigsten" Pfad nicht groß genug, um die gewünschte Resourcenmenge nur durch diesem Weg zu transportieren, also wir müssen auch andere Pfade, die i.A. teurer sind, benutzen.</p>
+
+                <p>Das Problem, wie eine bestimmte Ressourcemenge mit minimalen Kosten transportiert werden kann, wird das <strong>Min-Cost Flow Problem genannt</strong>.</p>
+
+                <h2>Dieses Applet präsentiert den Successive-Shortest-Path Algorithmus, welcher in einem gegebenen Netzwerk einen kostenminimalen Fluss berechnet.</h2>
+                <div id ="te_div_Entscheidung">
+                    <h2>Was möchtest du zuerst tun?</h2>
+                    <button id="te_button_gotoDrawGraph">Den Algorithmus testen!</button> <button id="te_button_gotoIdee">Genauere Beschreibung des Algorithmus lesen</button>
+                </div>
+                <p></p>
+                <br style="clear: both;" />
+            </div>
+        </div>
+
+        <!-- TAB Graph Erstellen -->
+        <div id="tab_tg">
+            <div>
+                <div class="canvasWrapper">
+                    <div class="svgContainer">
+                      <svg class="graphCanvas" id="tg_canvas_graph" width="700" height="500"></svg>
+                      <a class="svgDownloader" download="graph-editor.svg" href="data:text/plain,test">SVG Download</a>
+                    </div>
+                    <div class="Legende" id="tg_div_Legende">
+                        <h2 class="LegendeHeader"><button class="LegendeMin"></button> Legende</h2>
+                        <div class="LegendeText">
+                            <table>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/node.svg" alt="node" class="LegendeIcon"></td>
+                                    <td><span>Knoten</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/edge.svg" alt="edge" class="LegendeIcon"></td>
+                                    <td><span>Kante mit Kapazität 10 und Kosten 1</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="LegendeMinimized">
+                        <h2 class="LegendeHeader"><button class="LegendeMin"></button> Legende</h2>
+                    </div>
+                </div>
+                <div id="tg_div_statusWindow" class="statusWindow">
+                    <h2>Auf welchem Graph soll der Algorithmus ausgeführt werden?</h2>
+                    <h3>Nimm ein fertiges Beispiel:</h3>
+                    <label for="graphSelector">Wähle aus </label>
+                    <select name="graphSelector" id="tg_select_GraphSelector">
+                        <option selected = true label="graph 1">graph1</option>
+                        <option label="graph 2">graph2</option>
+						<option label="graph 3">graph3</option>
+						<option label="graph 4">graph4</option>
+						<option label="graph 5">graph5</option>
+						<option label="graph 6">graph6</option>
+						<option label="graph 7">graph7</option>
+						<option label="graph 8">graph8</option>
+						<option label="graph 9">graph9</option>
+                    </select>
+
+
+                    <h3>Ändere den Graphen nach deinen Vorstellungen:<br></h3>
+                    <div id="tg_div_statusErklaerung">
+                    <ul>
+                        <li>Um einen Knoten zu erstellen, mache einen Doppelklick in das Zeichenfeld.</li>
+                        <li>Um eine Kante zu erstellen, klicke zunächst auf den Ausgangsknoten und dann auf den Zielknoten.</li>
+                        <li>Die Kantenkapazität und Kosten können mit einem Doppelklick auf die Kante verändert werden. Beachten Sie, dass für diesen Algorithmus weder die Kapazatäten noch die Kosten der Kanten negative sein dürfen!</li>
+                        <li>Ein Rechtsklick löscht Kanten und Knoten.</li>
+                    </ul>
+                    </div>
+
+                    <h3>Lade den veränderten Graphen herunter:</h3>
+
+                    <a id="fileDownloader" download="graph.txt" href="data:text/plain,test">Download</a>
+
+                    <h3>Lade einen existierenden Graphen hoch:</h3>
+                    <input type="file" id="fileUploader" accept=".txt"/></input> <!--name="files[]" accept="text/*"-->
+                    <div id="ta_div_parseError" title="Error reading graph from file">
+<!--                         <h2>Error code:</h2> -->
+                        Ein
+                        <h2 style="color:red" id="ta_div_parseErrorText"></h2>
+                        trat auf beim Lesen der Datei:
+                        <h3 id="ta_div_parseErrorFilename"></h3>
+                        Fehlerbeschreibung:
+                        <pre id="ta_div_parseErrorDescription"></pre>
+                    </div>
+
+                    <h3>Was nun?</h3>
+                    <p><button id="tg_button_gotoAlgorithmTab">Fertig &ndash; weiter zum Algorithmus!</button></p>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB Algorithmus ausführen -->
+        <div id="tab_ta">
+            <div>
+                <div class="canvasWrapper">
+                       <div class="svgContainer">
+                        <svg class="graphCanvas" id="ta_canvas_graph" width="700" height="450"></svg>
+						</div>
+                        <a class="svgDownloader" download="maxflow-graph-algorithm-graph.svg" href="data:text/plain,test">SVG Download </a>
+                    <div id="graph-info">
+                        <span id="graph-state"></span>
+                    </div>
+                    <div id="cost-info">
+                      <span id="currMinCost"></span>
+                    </div>
+                    <div class="Legende">
+                        <h2 class="LegendeHeader"><button class="LegendeMin"></button> Legende</h2>
+                        <div class="LegendeText">
+                            <table>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/node.svg" alt="node" class="LegendeIcon"></td>
+                                    <td><span>Knoten</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/node-st.svg" alt="nodes" class="LegendeIcon"></td>
+                                    <td><span>Source Knoten</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/node-t.svg" alt="nodet" class="LegendeIcon"></td>
+                                    <td><span>Target/Sink Knoten</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/edge-flow.svg" alt="edge" class="LegendeIcon"></td>
+                                    <td><span>Kante mit Fluss 7, Kapazität 10 und Kosten 1</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/edge-residual.svg" alt="edge" class="LegendeIcon"></td>
+                                    <td><span>Kante im Residualnetzwerk, Kosten 1</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="LegendeTabelle"><img src="img/edge-cycle.svg" alt="edge" class="LegendeIcon"></td>
+                                    <td><span>Kante auf negativem Kreis, Kosten 1</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="LegendeMinimized">
+                        <h2 class="LegendeHeader"><button class="LegendeMin"></button> Legende</h2>
+                    </div>
+                </div>
+                <div id="ta_div_statusWindow" class="statusWindow">
+                    <h2 class="">Algorithm status</h2>
+                    <div id="ta_div_abspielbuttons"> <!--class="ui-widget-header ui-corner-all"-->
+                        <input  id="ta_button_rewind" type="checkbox"><label for="ta_button_rewind" id="ta_button_text_rewind">rewind</label>
+
+                        <button id="ta_button_Zurueck">Zurück</button>
+
+                        <button id="ta_button_1Schritt">Nächster Schritt</button>
+
+                        <input  id="ta_button_vorspulen" type="checkbox"><label for="ta_button_vorspulen" id="ta_button_text_fastforward">Vorspulen</label>
+
+                        <span id="ta_button_text_pause" style="display:none">Pause</span>
+                    </div>
+                    
+
+
+                </div>
+				<div id="ta_div_confirmTabChange" title="Algorithmus abbrechen?" class="tabChangeWarningDialog">
+                <h2>Beim Wechsel des Tabs wird der Algorithmus abgebrochen.</h2>
+                <p>Du kannst die Anwendung <a href="#" target="_blank" tabindex=-1> in einem anderen Browserfenster</a> öffnen, um parallel einen anderen Tab zu lesen.</p>
+            </div>
+        </div>
+
+            </div>
+			
+			
+	<div id="tab_ti" style="display: none;">
+		<div id="ti_div_Einfuehrungstext">
+			
+			
+		<!--
+		
+		</div>
+			</div>
+			
+			
+			<div id="tab_tf1" >
+				<div>
+				
+				
+				</div>
+			</div>
+			
+			<div id="tab_tf2">
+				<div>
+			
+				</div>
+			</div>
+			
+		-->
+		</div>
+		<div id="tab_tw" style="display: none;">
+            <div id="tw_Accordion">
+                <h3>Wie sieht der Pseudocode des Algorithmus aus?</h3>
+                <div>
+                    <pre><code>Input: directed graph G=(V,E), capacity function u(e), cost function c(e), source and target node
+                      Output: minimum-cost max flow f(e)</code></pre>
+                      <hr>
+                      <pre>
+                      <code>BEGIN
+                        (* Initialize to max flow *)
+                        f = CALCULATE MAX FLOW()
+                        (* Main Loop *)
+                        WHILE negative cycle might exist DO
+                          CONSTRUCT RESIDUAL GRAPH G'(V,E') WITH CAPACITIES u'(e)
+                          EXECUTE BELLMAN-FORD ON G' FROM TARGET NODE
+                          IF negative cycle exists
+                            IDENTIFY cycle-edges
+                            adjustment &larr; min(u'(e) | e &isin; cycle-edges )
+                            FOR e &isin; cycle-edges
+                              f(e) += adjustment
+                      END
+                      </code></pre>
+                </div>
+
+                <h3>Wie schnell ist der Algorithmus?</h3>
+                <div>
+                    <p>The generic cycle cancelling algorithm has the non-polynomial runtime O(|E| |V| C), with C being the total cost of the initial flow - as each iteration requires a run of Bellman-Ford in O(|E| |V|) and reduces the cost by at least 1.</p>
+                    <p>There are multiple more complex algorithms for the min-cost flow problem which achieve better runtimes. One adaption of the cycle cancelling algorithm is <strong> minimum mean cycle cancelling</strong>, which already results in a strongly polynomial algorithm. Other algorithms can e.g. be found <a href="https://en.wikipedia.org/wiki/Minimum-cost_flow_problem#Solutions">here</a>.</p>
+                </div>
+
+                <h3>Literatur</h3>
+                <div>
+                  <h4>Veröffentlichungen</h4>
+                    <dl>
+                    <dt>[GT89]</dt><dd> Andrew V. Goldberg and Robert E. Tarjan (1989). "Finding minimum-cost circulations by canceling negative cycles". Journal of the ACM. 36 (4): 873–886. doi:<a href="https://dx.doi.org/10.1145%2F76359.76368">10.1145/76359.76368</a>.</dd>
+                    </dl>
+
+                    <h4>Webseiten</h4>
+                  <ol>
+                      <li><a href="https://en.wikipedia.org/wiki/Minimum-cost_flow_problem">Wikipedia: Minimum-cost flow problem</a></li>
+                      <li><a href="http://www.columbia.edu/~cs2035/courses/ieor6614.S16/mcf.pdf">Minimum Cost Flows</a></li>
+                  </ol>
+                </div>
+
+                <h3>Wo finde ich noch mehr Informationen zu Graphalgorithmen?</h3>
+                <div>
+				 <p>
+                        Weitere Graphalgorithmen werden auf der <a href="http://www-m9.ma.tum.de/Allgemeines/Routenplanung">Webseite des Lehrstuhls M9</a> der TU München erklärt.
+                    </p>
+					<p>
+						Außerdem gibt es ein interessantes Buch zu kürzesten Wegen: <a href="http://www-m9.ma.tum.de/Ruth/WebHome">Das Geheimnis des kürzesten Weges</a>
+					</p>
+					<p>
+						Ein <a href="http://www.ma.tum.de/Studium/Studieninteressierte"> Mathematikstudium an der TU München</a> beantwortet alle Fragen zur Graphentheorie (falls eine Lösung bekannt ist).
+					</p>
+                </div>
+				<h3>Ein letzter Hinweis zum Ziel dieser Seite und zu Zitationen</h3>
+				<div>
+					<p>Der Lehrstuhl M9 der TU München beschäftigt sich mit diskreter Mathematik, angewandter Geometrie und der Optimierung von mathematischen Problemen. Die hier dargestellten Algorithmen sind sehr grundlegende Beispiele für Verfahren der diskreten Mathematik (die tägliche Forschung des Lehrstuhl geht weit darüber hinaus). Diese Seite soll SchülerInnen und Studierenden dabei helfen, diese auch im realen Leben sehr wichtigen Verfahren (besser) zu verstehen und durch Ausprobieren zu durchdringen.</p>
+					<p>Um diese Seite zu zitieren, nutze bitte die folgenden Angaben:</p>
+					<ul>
+						<li>Titel: Der Cycle Cancelling Algorithmus
+						<li>Autoren: Quirin Fischer, Wolfgang F. Riedl; Technische Universität München
+						<li>Link: <a href="https://www-m9.ma.tum.de/graph-algorithms/flow-cycle-cancelling">https://www-m9.ma.tum.de/graph-algorithms/flow-cycle-cancelling</a>
+					</ul>
+            	</div>
+            </div>
+        </div>
+			
+			
+
+
+	
+	<!-- End tabs -->
+	</div>
+	
+	
+	 <footer>
+        <p class="Disclaimer">
+            BA Projekt von Gergana Kratuncheva am Lehrstuhl M9 der Technischen Universität München. 2017 | <a href="index_en.html">EN</a> | <a href="http://www-m9.ma.tum.de/Allgemeines/Rechtliches">Disclaimer und Rechtshinweise</a> | <a href="http://www-m9.ma.tum.de/Allgemeines/Impressum">Impressum</a> | <a href="mailto&#58;m&#46;ritter&#64;ma&#46;tum&#46;de&#63;subject&#61;M9&#45;Web&#45;Feedback">Anregungen</a>
+        </p>
+    </footer>
+</body>
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

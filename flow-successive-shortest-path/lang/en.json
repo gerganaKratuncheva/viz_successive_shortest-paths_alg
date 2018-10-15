@@ -1,0 +1,96 @@
+{ 
+  "name": "en",
+  "fields" : {
+    "algorithm_btn_prev": "Previous",
+    "algorithm_btn_next": "Next",
+    "algorithm_btn_frwd": "Forward",
+    "algorithm_btn_paus": "Pause",
+    "algorithm_msg_start1": "First choose a starting node!",
+    "algorithm_msg_start2": "From this node, the distances to all other nodes are calculated.",
+    "algorithm_msg_start3": "Just click on the corresponding node in the graph.",
+    "algorithm_msg_finish": "What now?",
+    "algorithm_msg_test": "Test your knowledge in exercises:",
+    "algorithm_btn_more": "Read the description of the algorithm",
+    "algorithm_btn_exe1": "Answer the following questions.",
+    "algorithm_btn_exe2": "Which ordering of the edges is optimal?",
+    "textdb_text_oneedge": "an edge",
+    "textdb_text_edges": "Edges",
+    "textdb_text_phase": "Phase",
+   
+    "textdb_msg_case4_1": "Result: Algorithm finished successfully.",
+    "textdb_msg_case5_1": "Now the algorithm can begin!",
+	
+    "aufgabe1_btn_next_question": "Forward: Next question",
+    "aufgabe1_btn_retry": "Try again with a different graph?",
+    "aufgabe1_btn_exe2": "Try the second exercise:",	
+	"aufgabe1_btn_chooseNewParameters": "Choose new sourse and target nodes and continue with the exercise",
+    
+	"aufgabe1_question1": "Is there a valid flow for this network? ",
+    "aufgabe1_answer1": "Yes",	
+	"aufgabe1_answer1_reason1": "There exists a path from the source node s to the target node t, thus there exist a valid flow.",
+	"aufgabe1_answer1_2": "No",
+    "aufgabe1_answer1_reason2": "There is no path from the source node s to the target node t in the residual network, thus there is no valid flow.",
+	"aufgabe1_question2": "What value should b(s) be set to?" ,
+	"answer_aufgabe2": "The correct value is: ",
+	"answer_aufgabe2_reason": "The values of b(s) and b(t) are always set to the remaining flow and the negated remaining flow that we wish to send from s to t respectively. So b(s) = ", 
+	
+    "aufgabe1_question3": "What is the shortest path from the excess node to the demand node? Tip: the answers are given as nodes: (s,v,w,t) corresponds to s->v,v->w,w->t.",
+	"aufgabe1_answer3": "The shortest path is: ",
+    "aufgabe1_answer3_reason1": "The shortest path from the excess node s to the demand node t can be found with algorithms like Dijkstra, Bellman-Ford, Breadth first search, A*-Algorithm, etc. In this applet we use the Bellman-Ford algorithm and make sure that we have found the shortest distance from s to the predecessor of a node and then using the shortest path to the predecessor we add the edge connecting the node with its predecessor. Here the shortest path from s to t is: ",
+	
+	"aufgabe1_question4": "What would be the value of p(t) in the next step?",
+	"aufgabe1_answer4": "p(t) = ",
+    "aufgabe1_answer4_reason1": "At every iteration the potentials of the nodes are calculated with the following formula: p'(v) = p(v) - d(s,v) where p(v) is the current potential of the node v and d(s,v) is the shortest distance from s to v. So the updated potential of t is p(t) = ",
+    
+	
+    "aufgabe1_text_yes": "Yes",
+    "aufgabe1_text_no": "No",
+    "aufgabe1_text_question": "Question",
+    "aufgabe1_text_results": "Results",
+    "aufgabe1_text_right_answer": "Right answer:",
+	"aufgabe1_text_wrong_answer": "Your answer was wrong.",
+    "aufgabe1_result1": "Congratulations!",
+    "aufgabe1_result2": "You have answered all questions correctly.",
+    "aufgabe1_result3": "Exercise completed",
+    "aufgabe1_result4": "Number of questions:",
+    "aufgabe1_result5": "Correct answers:",
+    "aufgabe1_result6": "Wrong answers:",
+	
+	
+	
+    "aufgabe2_text_question": "Question",
+	"aufgabe2_text_results": "Results",
+    "aufgabe2_text_right_answer": "Right answer:",
+	"aufgabe2_text_wrong_answer": "Your answer was wrong.",
+    "aufgabe2_result1": "Congratulations!",
+    "aufgabe2_result2": "You have answered all questions correctly.",
+    "aufgabe2_result3": "Exercise completed",
+    "aufgabe2_result4": "Number of questions:",
+    "aufgabe2_result5": "Correct answers:",
+    "aufgabe2_result6": "Wrong answers:",
+	"aufgabe2_question1":"Please fill out the missing capacities and reduced costs.",
+	"aufgabe2_question2": "Please fill out the missing potentials.",
+	"aufgabe2_prepare_potentials": "In the next step you will be asked to fill out some mssing potentials on the network. To do so you will need the information from the current state of the network which will no longer be available for you to see. So please prepare your answers for the nodes: ",
+	"aufgabe2_click_ready":" and click the button Ready to answer the question.",
+	"aufgabe2_prepare_cost": "In the next step you will be asked to fill out some mssing reduced costs on the network. To do so you will need the information from the current state of the network which will no longer be available for you to see. So please prepare your answers for the edges: ",
+	
+	
+	
+	"aufgabe2_text_question": "Network",
+	"aufgabe2_text_results": "Results",
+	"aufgabe2_btn_retry": "Try again?",
+    "aufgabe2_btn_more": "Learn more about the algorithm",
+
+	"aufgabe2_result1": "Congratulations!",
+    "aufgabe2_result2": "You have cosntructed all resuidual networks correctly.",
+    "aufgabe2_result3": "Exercise completed",
+
+	
+	
+    "aufgabe2_result_3": "Result",
+    "aufgabe2_result_4_a": "The graph contains a reachable negative circle. As this can only be checked at the end, the algorithm would have needed all",
+    "aufgabe2_result_4_b": "phases",
+	"tabChange_stay": "Stay in tab",
+	"tabChange_change": "Change tab"
+  }
+}
